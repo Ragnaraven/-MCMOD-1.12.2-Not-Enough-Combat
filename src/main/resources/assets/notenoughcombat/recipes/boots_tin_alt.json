@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "notenoughcombat:boots_tin"
+  },
+  "pattern": [
+    "   ",
+    "o o",
+    "o o"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "o": {
+    "type": "forge:ore_dict",
+    "ore": "ingotTin"
+}
+  }
+}

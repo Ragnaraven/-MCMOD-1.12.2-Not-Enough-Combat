@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "notenoughcombat:sword_tin"
+  },
+  "pattern": [
+    "  m",
+    "  m",
+    "  s"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "minecraft:stick"
+    },    "m": {
+    "type": "forge:ore_dict",
+    "ore": "ingotTin"
+}
+  }
+}

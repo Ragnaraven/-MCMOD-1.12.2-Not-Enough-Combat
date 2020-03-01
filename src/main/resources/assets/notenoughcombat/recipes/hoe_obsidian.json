@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "notenoughcombat:hoe_obsidian"
+  },
+  "pattern": [
+    "mm ",
+    " s ",
+    " s "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "minecraft:stick"
+    },
+    "m": {
+      "item": "notenoughcombat:obsidian_plate"
+    }
+  }
+}

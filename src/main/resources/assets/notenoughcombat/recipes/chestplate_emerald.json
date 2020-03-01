@@ -1,0 +1,16 @@
+{
+  "result": {
+    "item": "notenoughcombat:chestplate_emerald"
+  },
+  "pattern": [
+    "o o",
+    "ooo",
+    "ooo"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "o": {
+      "item": "minecraft:emerald"
+    }
+  }
+}

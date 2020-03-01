@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "notenoughcombat:leggings_ender_obsidian"
+  },
+  "pattern": [
+    " o ",
+    "oOo",
+    " o "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "o": {
+      "item": "notenoughcombat:ender_obsidian_plate"
+    },
+    "O": {
+      "item": "notenoughcombat:leggings_obsidian"
+    }
+  }
+}

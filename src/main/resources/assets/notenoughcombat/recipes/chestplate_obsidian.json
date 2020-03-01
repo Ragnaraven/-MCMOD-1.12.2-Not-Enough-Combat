@@ -1,0 +1,16 @@
+{
+  "result": {
+    "item": "notenoughcombat:chestplate_obsidian"
+  },
+  "pattern": [
+    "o o",
+    "ooo",
+    "ooo"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "o": {
+      "item": "notenoughcombat:obsidian_plate"
+    }
+  }
+}

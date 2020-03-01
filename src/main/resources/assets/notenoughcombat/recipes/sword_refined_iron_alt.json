@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "notenoughcombat:sword_refined_iron"
+  },
+  "pattern": [
+    "m  ",
+    "m  ",
+    "s  "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "minecraft:stick"
+    },    "m": {
+    "type": "forge:ore_dict",
+    "ore": "ingotSteel"
+}
+  }
+}

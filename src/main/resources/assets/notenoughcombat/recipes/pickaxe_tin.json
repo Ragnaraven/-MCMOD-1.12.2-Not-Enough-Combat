@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "notenoughcombat:pickaxe_tin"
+  },
+  "pattern": [
+    "mmm",
+    " s ",
+    " s "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "minecraft:stick"
+    },    "m": {
+    "type": "forge:ore_dict",
+    "ore": "ingotTin"
+}
+  }
+}

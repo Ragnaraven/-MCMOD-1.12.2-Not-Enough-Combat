@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "notenoughcombat:boots_copper"
+  },
+  "pattern": [
+    "o o",
+    "o o",
+    "   "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "o": {
+    "type": "forge:ore_dict",
+    "ore": "ingotCopper"
+}
+  }
+}

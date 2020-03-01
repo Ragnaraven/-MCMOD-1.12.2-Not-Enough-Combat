@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "notenoughcombat:sword_emerald"
+  },
+  "pattern": [
+    " m ",
+    " m ",
+    " s "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "minecraft:stick"
+    },
+    "m": {
+      "item": "minecraft:emerald"
+    }
+  }
+}

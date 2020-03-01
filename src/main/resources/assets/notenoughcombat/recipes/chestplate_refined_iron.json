@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "notenoughcombat:chestplate_refined_iron"
+  },
+  "pattern": [
+    "o o",
+    "ooo",
+    "ooo"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "o": {
+    "type": "forge:ore_dict",
+    "ore": "ingotSteel"
+}
+  }
+}

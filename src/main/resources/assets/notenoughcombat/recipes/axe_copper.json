@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "notenoughcombat:axe_copper"
+  },
+  "pattern": [
+    "mm ",
+    "ms ",
+    " s "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "minecraft:stick"
+    },    "m": {
+    "type": "forge:ore_dict",
+    "ore": "ingotCopper"
+}
+  }
+}
