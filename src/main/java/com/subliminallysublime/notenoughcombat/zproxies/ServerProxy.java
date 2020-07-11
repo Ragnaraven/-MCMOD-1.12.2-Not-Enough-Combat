@@ -1,4 +1,4 @@
-package com.subliminallysublime.notenoughcombat.zproxys;
+package com.subliminallysublime.notenoughcombat.zproxies;
 
 import com.subliminallysublime.notenoughcombat.items.NECItems;
 import com.subliminallysublime.notenoughcombat.items.armor.NECArmorRegistry;

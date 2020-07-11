@@ -1,4 +1,4 @@
-package com.subliminallysublime.notenoughcombat.zproxys;
+package com.subliminallysublime.notenoughcombat.zproxies;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;

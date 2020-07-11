@@ -6,13 +6,11 @@ import com.subliminallysublime.notenoughcombat.items.armor.ArmorEnderObsidian;
 import com.subliminallysublime.notenoughcombat.items.armor.ArmorObsidian;
 import com.subliminallysublime.notenoughcombat.particles.ParticleEffects;
 import com.subliminallysublime.notenoughcombat.util.RangedInt;
-
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.DimensionType;
@@ -171,6 +169,7 @@ public class NECEventHandler
 				{
 					if (NotEnoughCombatMod.RANDOM.nextInt(LAVA_SPAWN_CHANCE.get()) == 0)
 					{
+						//Cancel the drop, set the block.
 						e.getWorld().setBlockState(e.getPos(), Blocks.LAVA.getDefaultState());
 						e.setCanceled(true);
 					}

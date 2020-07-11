@@ -1,7 +1,7 @@
 package com.subliminallysublime.notenoughcombat;
 
 import com.subliminallysublime.notenoughcombat.config.NECConfig;
-import com.subliminallysublime.notenoughcombat.zproxys.ServerProxy;
+import com.subliminallysublime.notenoughcombat.zproxies.ServerProxy;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -22,8 +22,8 @@ public class NotEnoughCombatMod
     public static final String MODID = "notenoughcombat";
     public static final String VERSION = "1.12.2-1.0";
 	
-    public static final String CLIENT_SIDE = "com.subliminallysublime.notenoughcombat.zproxys.ClientProxy";
-	public static final String SERVER_SIDE = "com.subliminallysublime.notenoughcombat.zproxys.ServerProxy";
+    public static final String CLIENT_SIDE = "com.subliminallysublime.notenoughcombat.zproxies.ClientProxy";
+	public static final String SERVER_SIDE = "com.subliminallysublime.notenoughcombat.zproxies.ServerProxy";
 	
 	public static final Random RANDOM = new Random();
 	
