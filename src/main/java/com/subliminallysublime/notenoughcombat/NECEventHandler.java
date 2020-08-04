@@ -281,10 +281,10 @@ public class NECEventHandler
 			
 			int pick = checkPick(player);
 			
-			if (pick == -1) //Nothing special if not o or eo pick
+			if (pick == -1) //Nothing special if not Obisidian or Ender Obsidian pick
 				return;
 			
-			//If here, using a pick
+			//If here, player is using a pick
 			try
 			{
 				int armor = checkArmor(player);
@@ -311,21 +311,24 @@ public class NECEventHandler
 								if (extra < i)
 									multiplier++;
 							
-							//Apply extra
+							//Apply extras
 							for(ItemStack itemStack : e.getDrops())
 							{
 								if(checkOreRelationship(block, itemStack))
 								{
 									int count = itemStack.getCount() * multiplier;
 
-									//Add extra quartz cause its SOOOOO annoying.
+									//Add extra quartz.
 									if(block.getUnlocalizedName().toLowerCase().equals("tile.netherquartz") && itemStack.getItem().getUnlocalizedName().toLowerCase().equals("item.netherquartz"))
 										count *= FORTUNE_EFFECT_QUARTZ_MULTIPLIER;
 
+									//Cap the max to 64.
 									itemStack.setCount(count > 64 ? 64 : count);
 									
+									//Damage pick proportionally
 									player.inventory.getCurrentItem().damageItem(multiplier * FORTUNE_EFFECT_EXTRA_PICK_HURT, player);
 									
+									//Spawn particles for a magical effect.
 									if (e.getWorld().isRemote)
 										for (int i = 0; i < 15; i++)
 											ParticleEffects.spawnEnderObsidianSpawnParticles(e.getWorld(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
