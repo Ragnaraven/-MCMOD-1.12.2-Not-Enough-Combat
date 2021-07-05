@@ -1,0 +1,24 @@
+modLoader="javafml" #mandatory
+loaderVersion="[36,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+license="All rights reserved"
+
+[[mods]] #mandatory
+modId="examplemod" #mandatory
+version="${file.jarVersion}" #mandatory
+displayName="End Game Armors" #mandatory
+logoFile="icon.png" #optional
+credits="Ragnaraven" #optional
+authors="Ragnaraven" #optional
+description='''Adds supplemental armor types.
+
+Obsidian and Ender Obsidian Armor have special abilities!
+Emerald armor is a tier above Diamond!
+
+If Tin, Copper, Refined Iron or Silver is found, an armor type will also be available. This mod does NOT add any of these ores, however. It is a compatibility feature.
+'''
+
+# [[dependencies.examplemod]] #optional
+#    modId="forge" #mandatory
+#    mandatory=true #mandatory
+#    versionRange="[36,)" #mandatoryordering="NONE"
+#   side="BOTH"

@@ -1,15 +1,15 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "endgamearmors",
+  "name": "End Game Armors",
+  "description": "A mod that adds new armor types, including Emerald, Obsidian and Ender Obsidian.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
-  "logoFile": "",
+  "authorList": ["Ragnaraven"],
+  "credits": "",
+  "logoFile": "icon.png",
   "screenshots": [],
   "dependencies": []
 }
