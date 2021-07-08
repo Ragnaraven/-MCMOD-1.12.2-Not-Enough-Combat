@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "notenoughcombat:blocks/ender_obsidian"
-  }
-}

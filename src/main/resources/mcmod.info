@@ -1,7 +1,7 @@
 [
 {
-  "modid": "endgamearmors",
-  "name": "End Game Armors",
+  "modid": "eoarmors",
+  "name": "Ender Obsidian and Armors",
   "description": "A mod that adds new armor types, including Emerald, Obsidian and Ender Obsidian.",
   "version": "${version}",
   "mcversion": "${mcversion}",

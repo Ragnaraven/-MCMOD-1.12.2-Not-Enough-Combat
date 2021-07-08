@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "eoarmors:sword_ender_obsidian"
+  },
+  "pattern": [
+    " m ",
+    " m ",
+    " s "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "minecraft:stick"
+    },
+    "m": {
+      "item": "eoarmors:ender_obsidian_plate"
+    }
+  }
+}

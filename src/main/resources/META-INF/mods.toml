@@ -3,13 +3,16 @@ loaderVersion="[36,)" #mandatory This is typically bumped every Minecraft versio
 license="All rights reserved"
 
 [[mods]] #mandatory
-modId="examplemod" #mandatory
+modId="eoarmors" #mandatory
 version="${file.jarVersion}" #mandatory
-displayName="End Game Armors" #mandatory
+displayName="Ender Obsidian and Armors" #mandatory
 logoFile="icon.png" #optional
-credits="Ragnaraven" #optional
+credits="Thank you for 450 downloads on CurseForge!" #optional
 authors="Ragnaraven" #optional
-description='''Adds supplemental armor types.
+description='''
+Formerly known as Not Enough Combat (NEC).
+
+Adds new armor types.
 
 Obsidian and Ender Obsidian Armor have special abilities!
 Emerald armor is a tier above Diamond!

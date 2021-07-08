@@ -13,8 +13,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = '1.0'
-group = 'io.github.ragnaraven.endgamearmors' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'endgamearmors'
+group = 'io.github.ragnaraven.eoarmors' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'eoarmors'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 

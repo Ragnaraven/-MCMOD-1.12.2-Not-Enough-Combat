@@ -1,0 +1,36 @@
+itemGroup.NECUniversalTab=End Game Armors
+
+item.eoarmors.obsidian_plate.name=Obsidian Plate
+item.eoarmors.ender_obsidian_plate.name=Ender Obsidian Plate
+
+tile.block_ender_obsidian.name=Ender Obsidian
+
+item.eoarmors.helmet_obsidian.name=Obsidian Helmet
+item.eoarmors.chestplate_obsidian.name=Obsidian Chestplate
+item.eoarmors.leggings_obsidian.name=Obsidian Leggings
+item.eoarmors.boots_obsidian.name=Obsidian Boots
+item.eoarmors.axe_obsidian.name=Obsidian Axe
+item.eoarmors.hoe_obsidian.name=Obsidian Hoe
+item.eoarmors.pickaxe_obsidian.name=Obsidian Pickaxe
+item.eoarmors.shovel_obsidian.name=Obsidian Shovel
+item.eoarmors.sword_obsidian.name=Obsidian Sword
+
+item.eoarmors.helmet_emerald.name=Emerald Helmet
+item.eoarmors.chestplate_emerald.name=Emerald Chestplate
+item.eoarmors.leggings_emerald.name=Emerald Leggings
+item.eoarmors.boots_emerald.name=Emerald Boots
+item.eoarmors.axe_emerald.name=Emerald Axe
+item.eoarmors.hoe_emerald.name=Emerald Hoe
+item.eoarmors.pickaxe_emerald.name=Emerald Pickaxe
+item.eoarmors.shovel_emerald.name=Emerald Shovel
+item.eoarmors.sword_emerald.name=Emerald Sword
+
+item.eoarmors.helmet_ender_obsidian.name=Ender Obsidian Helmet
+item.eoarmors.chestplate_ender_obsidian.name=Ender Obsidian Chestplate
+item.eoarmors.leggings_ender_obsidian.name=Ender Obsidian Leggings
+item.eoarmors.boots_ender_obsidian.name=Ender Obsidian Boots
+item.eoarmors.axe_ender_obsidian.name=Ender Obsidian Axe
+item.eoarmors.hoe_ender_obsidian.name=Ender Obsidian Hoe
+item.eoarmors.pickaxe_ender_obsidian.name=Ender Obsidian Pickaxe
+item.eoarmors.shovel_ender_obsidian.name=Ender Obsidian Shovel
+item.eoarmors.sword_ender_obsidian.name=Ender Obsidian Sword

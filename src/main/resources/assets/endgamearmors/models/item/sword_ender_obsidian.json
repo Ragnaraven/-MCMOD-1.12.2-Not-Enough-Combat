@@ -1,6 +1,0 @@
-{
-  "parent": "item/handheld",
-  "textures": {
-    "layer0": "notenoughcombat:items/sword_ender_obsidian"
-  }
-}
