@@ -1,5 +1,5 @@
 {
   "variants": {
-    "normal": { "model": "eoarmors:block_ender_obsidian" }
+    "": { "model": "eoarmors:block/block_ender_obsidian" }
   }
 }

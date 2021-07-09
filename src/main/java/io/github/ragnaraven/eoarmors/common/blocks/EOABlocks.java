@@ -21,16 +21,16 @@ public class EOABlocks
 {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, EnderObsidianArmorsMod.MODID);
 
-	public static final RegistryObject<Block> ENDER_OBSIDIAN = BLOCKS.register("axe_emerald", () -> new EnderObsidian(
+	public static final RegistryObject<Block> ENDER_OBSIDIAN = BLOCKS.register("block_ender_obsidian", () -> new EnderObsidian(
 			AbstractBlock.Properties.of(Material.STONE)
 			.harvestLevel(3)
 			.sound(SoundType.STONE)
-			.lightLevel(new ToIntFunction<BlockState>() {
+			/*.lightLevel(new ToIntFunction<BlockState>() {
 				@Override
 				public int applyAsInt(BlockState value) {
 					return 3;
 				}
-			})
+			})*/
 			.strength(50f, 6000f))
 	);
 

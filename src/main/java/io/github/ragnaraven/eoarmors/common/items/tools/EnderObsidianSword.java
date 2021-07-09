@@ -1,9 +1,11 @@
 package io.github.ragnaraven.eoarmors.common.items.tools;
 
+import io.github.ragnaraven.eoarmors.EnderObsidianArmorsMod;
 import io.github.ragnaraven.eoarmors.client.render.particles.ParticleEffects;
 import io.github.ragnaraven.eoarmors.core.util.EOAHelpers;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.command.impl.TeleportCommand;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.*;
@@ -13,6 +15,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Dimension;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 
 /**
@@ -21,7 +24,7 @@ import net.minecraft.world.World;
 public class EnderObsidianSword extends SwordItem
 {
 	public static final String PLAYER_TP_DATA_TAG = "NEC_PLAYER_TP";
-	public static final int TP_COOLDOWN = 500;
+	public static final int TP_COOLDOWN = 10;
 	public static final double TP_RANGE = 125f;
 	public static final int TP_HELPER_DISTANCE_AROUND = 3;
 	public static final int TP_DISTANCE_DAMAGE_DIVIDER = 12;
@@ -32,26 +35,22 @@ public class EnderObsidianSword extends SwordItem
 	}
 
 	@Override
-	public ActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
-
+	public ActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand)
+	{
 		ItemStack itemStack = ((hand == Hand.MAIN_HAND) ? playerEntity.getMainHandItem() : playerEntity.getOffhandItem());
 
-		if(EOAHelpers.checkArmor(playerEntity) == 1)
+		if (EOAHelpers.CHECK_ARMOR(playerEntity) == 1)
 			//ERROR CHECK SP
-			playerTPCheck(itemStack, world, (ServerPlayerEntity) playerEntity);
+			playerTPCheck(itemStack, world, playerEntity);
 
 		return super.use(world, playerEntity, hand);
 	}
 	
 	//Should only be called if player is wearing EnderObsidianArmor and Sword
-	public void playerTPCheck (ItemStack itemStack, World world, ServerPlayerEntity player)
+	public void playerTPCheck (ItemStack itemStack, World world, PlayerEntity player)
 	{
 		//if (player.worldObj.isRemote)
 		{
-			/*Capability_EOATeleportCooldown.EOATeleportCooldown tpcd =
-					player.getCapability(Capability_EOATeleportCooldown.CAPABILITY_EOA_TP_COOLDOWN)
-						.orElseGet(Capability_EOATeleportCooldown.EOATeleportCooldown::new);*/
-
 			if(!player.getCooldowns().isOnCooldown(this))
 			{
 				try
@@ -61,35 +60,39 @@ public class EnderObsidianSword extends SwordItem
 					{
 						BlockPos pos = new BlockPos(position.getLocation());
 
-						int x = pos.getX();
-						int y = pos.getY();
-						int z = pos.getZ();
-						
-						int[] telePosition;
-						if ((telePosition = getNearestDoubleSpaceBlockWithinTwoBlocks(player.getCommandSenderWorld(), x, y, z, player.yRot)) != null)
+						if(World.isInSpawnableBounds(pos))
 						{
-							int distance = (int) distanceBetweenPoints(new int[]{ ((int) player.getX()), ((int)player.getY()), ((int)player.getZ())}, telePosition);
+							int x = pos.getX();
+							int y = pos.getY();
+							int z = pos.getZ();
 
-							player.getCooldowns().addCooldown(this, 1);
-
-							//Teleport
-							player.setPos(telePosition[0] + .5, telePosition[1], telePosition[2] + .5);
-
-							//Calc damage
-							int damage = distance / TP_DISTANCE_DAMAGE_DIVIDER;
-							damage = damage == 0 ? 1 : damage;
-							
-							//Harm armor
-							//Free TP in the end.
-							if(world.dimension().compareTo(Dimension.END) == 0)
+							int[] telePosition;
+							if ((telePosition = getNearestDoubleSpaceBlockWithinTwoBlocks(player.getCommandSenderWorld(), x, y, z, player.yRot)) != null)
 							{
-								player.inventory.hurtArmor(DamageSource.GENERIC, damage);
-								
-								//Harm sword
-								itemStack.hurt(damage, null, player);
+								int distance = (int) distanceBetweenPoints(new int[]{ ((int) player.getX()), ((int)player.getY()), ((int)player.getZ())}, telePosition);
+
+								player.getCooldowns().addCooldown(this, TP_COOLDOWN);
+
+								//Teleport
+								player.moveTo(telePosition[0], telePosition[1] + 1, telePosition[2]);
+
+								//Calc damage
+								int damage = distance / TP_DISTANCE_DAMAGE_DIVIDER;
+								damage = damage == 0 ? 1 : damage;
+
+								//Harm armor
+								//Free TP in the end.
+								if(!world.dimension().location().equals(Dimension.END.location()))
+								{
+									player.inventory.hurtArmor(DamageSource.GENERIC, damage);
+
+									//Harm sword
+									if(!world.isClientSide())
+										itemStack.hurt(damage, EnderObsidianArmorsMod.RANDOM, (ServerPlayerEntity) player);
+								}
+
+								finalizeTeleport(player, telePosition[0], telePosition[1], telePosition[2]);
 							}
-							
-							finalizeTeleport(player, telePosition[0], telePosition[1], telePosition[2]);
 						}
 					}
 				}
@@ -105,11 +108,19 @@ public class EnderObsidianSword extends SwordItem
 						Math.pow(pos2[1] - pos1[1], 2) +
 						Math.pow(pos2[2] - pos1[2], 2));
 	}
+
+	/*public RayTraceResult rayTrace(EntityLivingBase entity, double distance, float par3)
+	{
+		Vec3d vec3d = entity.getPositionEyes(par3);
+		Vec3d vec3d1 = entity.getLook(par3);
+		Vec3d vec3d2 = vec3d.addVector(vec3d1.x * distance, vec3d1.y * distance, vec3d1.z * distance);
+		return entity.world.rayTraceBlocks(vec3d, vec3d2, false, false, true);
+	}*/
 	
-	public RayTraceResult rayTrace(ServerPlayerEntity entity, double distance)
+	public RayTraceResult rayTrace(PlayerEntity entity, double distance)
 	{
 		 Vector3d vector3d = entity.getEyePosition(0);
-		 Vector3d vector3d1 = entity.getLookAngle();
+		 Vector3d vector3d1 = entity.getViewVector(0);
 		 Vector3d vector3d2 = vector3d.add(vector3d1.x * distance, vector3d1.y * distance, vector3d1.z * distance);
 		return entity.getCommandSenderWorld().clip(new RayTraceContext(vector3d, vector3d2, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.ANY, entity));
 	}

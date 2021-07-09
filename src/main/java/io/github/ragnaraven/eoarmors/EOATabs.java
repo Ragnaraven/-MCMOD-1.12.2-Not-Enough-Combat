@@ -9,15 +9,15 @@ import net.minecraft.item.ItemStack;
  */
 public class EOATabs
 {
-	public static final ItemGroup TAB_NECUNIVERSAL = new Tab_NECUniversal();
+	public static final ItemGroup TAB_EOAUNIVERSAL = new Tab_EOAUniversal();
 
 	public static void initializeTabs ()
 	{
 	}
 
-	public static class Tab_NECUniversal extends ItemGroup {
-		public Tab_NECUniversal () {
-			super("NECUniversalTab");
+	public static class Tab_EOAUniversal extends ItemGroup {
+		public Tab_EOAUniversal() {
+			super("EOAUniversalTab");
 		}
 
 		@Override

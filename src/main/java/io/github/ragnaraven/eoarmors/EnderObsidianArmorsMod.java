@@ -3,6 +3,7 @@ package io.github.ragnaraven.eoarmors;
 import io.github.ragnaraven.eoarmors.common.blocks.EOABlocks;
 import io.github.ragnaraven.eoarmors.common.items.EOAItems;
 import io.github.ragnaraven.eoarmors.config.ConfigHolder;
+import io.github.ragnaraven.eoarmors.loot.EOALootRegistry;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -35,6 +36,8 @@ public class EnderObsidianArmorsMod
 
 		EOAItems.ITEMS.register(bus);
 		EOABlocks.BLOCKS.register(bus);
+
+		EOALootRegistry.init();
 
 		final ModLoadingContext modLoadingContext = ModLoadingContext.get();
 		modLoadingContext.registerConfig(ModConfig.Type.CLIENT, ConfigHolder.CLIENT_SPEC);

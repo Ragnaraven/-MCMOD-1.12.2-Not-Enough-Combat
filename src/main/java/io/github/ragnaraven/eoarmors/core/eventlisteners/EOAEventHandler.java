@@ -3,22 +3,32 @@ package io.github.ragnaraven.eoarmors.core.eventlisteners;
 import io.github.ragnaraven.eoarmors.EnderObsidianArmorsMod;
 import io.github.ragnaraven.eoarmors.common.blocks.EOABlocks;
 import io.github.ragnaraven.eoarmors.common.items.EOAItems;
-import io.github.ragnaraven.eoarmors.common.items.armor.ArmorEnderObsidian;
-import io.github.ragnaraven.eoarmors.common.items.armor.ArmorObsidian;
 import io.github.ragnaraven.eoarmors.client.render.particles.ParticleEffects;
 import io.github.ragnaraven.eoarmors.core.util.RangedInt;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.DimensionType;
+import net.minecraft.item.Items;
+import net.minecraft.loot.LootContext;
+import net.minecraft.world.Dimension;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+import static io.github.ragnaraven.eoarmors.core.util.EOAHelpers.*;
 
 /**
  * Created by Andrew on 7/15/2017 at 2:48 AM.
  *
  * This class handles all tool healing events, as well as ender obsidian creation
  */
+@Mod.EventBusSubscriber(modid = EnderObsidianArmorsMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EOAEventHandler
 {
 	//On mine lava
@@ -52,14 +62,14 @@ public class EOAEventHandler
 
 	private static final int FORTUNE_EFFECT_QUARTZ_MULTIPLIER = 3;
 
-	@SubscribeEvent(priority = EventPriority.NORMAL)
-	public void onBlockBreak(BlockEvent.BreakEvent e)
+	@SubscribeEvent
+	public static void onBlockBreak(BlockEvent.BreakEvent e)
 	{
 		if (e.getPlayer() != null)
 		{
-			EntityPlayer player = e.getPlayer();
+			PlayerEntity player = e.getPlayer();
 			
-			int armor = checkArmor(player);
+			int armor = CHECK_ARMOR(player);
 			
 			if(armor == -1)
 				return; //-1 means no match for set.
@@ -68,7 +78,7 @@ public class EOAEventHandler
 			try
 			{
 				//Either set
-				if (checkPickAgainstArmorSet(armor, player))
+				if (CHECK_PICK_AGAINST_SET(armor, player))
 				{
 					if (e.getState().getBlock() == Blocks.OBSIDIAN)
 					{
@@ -81,91 +91,93 @@ public class EOAEventHandler
 			catch (NullPointerException ignored) { }
 		}
 	}
-	
-	private void doLavaDrop (final BlockEvent.BreakEvent e)
+
+	private static void doLavaDrop (final BlockEvent.BreakEvent e)
 	{
+		World world = (World) e.getWorld();
+
 		if(LAVA_SPAWN_CHANCE.get() != 0)
 		{
-			if (!e.getWorld().isRemote)
+			if (world.isClientSide())
 			{
-				if (e.getWorld().provider.getDimensionType() != DimensionType.THE_END) //If not in end
+				if(!world.dimension().location().equals(Dimension.END.location()))
 				{
 					if (EnderObsidianArmorsMod.RANDOM.nextInt(LAVA_SPAWN_CHANCE.get()) == 0)
 					{
 						//Cancel the drop, set the block.
-						e.getWorld().setBlockState(e.getPos(), Blocks.LAVA.getDefaultState());
+						world.setBlockAndUpdate(e.getPos(), Blocks.LAVA.defaultBlockState());
 						e.setCanceled(true);
 					}
 				}
 			}
 		}
 	}
-	
-	private void doExp (BlockEvent.BreakEvent e)
+
+	private static void doExp (BlockEvent.BreakEvent e)
 	{
 		if (EXP_CHANCE.get() != 0)
 		{
 			if (EnderObsidianArmorsMod.RANDOM.nextInt(EXP_CHANCE.get()) == 0)
 			{
 				e.setExpToDrop(e.getExpToDrop() + BASE_EXP.get());
-				
+
 				if(EXP_RANDOM.get() != 0)
 					e.setExpToDrop(e.getExpToDrop() + EnderObsidianArmorsMod.RANDOM.nextInt(EXP_RANDOM.get()));
 			}
 		}
 	}
-	
+
 	/**Catch for nullPointer if calling this**/
-	private void doToolHeal (EntityPlayer player)
+	private static void doToolHeal (PlayerEntity player)
 	{
 		try
 		{
 			if(OBSIDIAN_TO_MINE_TO_FULL_HEALTH.get() != 0)
 			{
-				int pickHeal = player.inventory.getCurrentItem().getMaxDamage() / OBSIDIAN_TO_MINE_TO_FULL_HEALTH.get();
+				int pickHeal = player.getMainHandItem().getMaxDamage() / OBSIDIAN_TO_MINE_TO_FULL_HEALTH.get();
 				pickHeal = pickHeal <= 0 ? 1 : pickHeal; //I have no clue why I am setting it to 1 but it heals the pick fully so..
-				player.inventory.getCurrentItem().setItemDamage(player.inventory.getCurrentItem().getItemDamage() - pickHeal);
+				player.getMainHandItem().setDamageValue(player.getMainHandItem().getDamageValue() - pickHeal);
 			}
-			
+
 			//Doesnt matter if pick is 0 here.
 			if(ADDITIONAL_OBSIDIAN_TO_MINE_NON_PICK_TO_FULL_HEALTH.get() != 0)
 			{
-				for (int i = 0; i < player.inventory.getSizeInventory(); i++)
-					if (player.inventory.getStackInSlot(i) != ItemStack.EMPTY && player.inventory.getStackInSlot(i) != player.inventory.getCurrentItem()) //Current item already healed
+				for (int i = 0; i < player.inventory.getContainerSize(); i++)
+					if (player.inventory.getItem(i) != ItemStack.EMPTY && player.inventory.getItem(i) != player.getMainHandItem()) //Current item already healed
 					{
 						//Only heals TOOLS. Not armor in inv. Must be wearing to heal.
-						ItemStack stack = player.inventory.getStackInSlot(i);
+						ItemStack stack = player.inventory.getItem(i);
 						Item item = stack.getItem();
-						if (item == EOAItems.axeObsidian
-								|| item == EOAItems.axeEnderObsidian
-								
-								|| item == EOAItems.pickaxeObsidian
-								|| item == EOAItems.pickaxeEnderObsidian
-								
-								|| item == EOAItems.shovelObsidian
-								|| item == EOAItems.shovelEnderObsidian
-								
-								|| item == EOAItems.hoeObsidian
-								|| item == EOAItems.hoeEnderObsidian
-								
-								|| item == EOAItems.swordObsidian
-								|| item == EOAItems.swordEnderObsidian)
+						if (       item == EOAItems.OBSIDIAN_AXE.get()
+								|| item == EOAItems.ENDER_OBSIDIAN_AXE.get()
+
+								|| item == EOAItems.OBSIDIAN_PICKAXE.get()
+								|| item == EOAItems.ENDER_OBSIDIAN_PICKAXE.get()
+
+								|| item == EOAItems.OBSIDIAN_SHOVEL.get()
+								|| item == EOAItems.ENDER_OBSIDIAN_SHOVEL.get()
+
+								|| item == EOAItems.OBSIDIAN_HOE.get()
+								|| item == EOAItems.ENDER_OBSIDIAN_HOE.get()
+
+								|| item == EOAItems.OBSIDIAN_SWORD.get()
+								|| item == EOAItems.ENDER_OBSIDIAN_SWORD.get())
 						{
 							int otherHeal = stack.getMaxDamage() / (OBSIDIAN_TO_MINE_TO_FULL_HEALTH.get() + ADDITIONAL_OBSIDIAN_TO_MINE_NON_PICK_TO_FULL_HEALTH.get());
-							otherHeal = otherHeal <= 0 ? 0 : otherHeal;
-							
+							otherHeal = Math.max(otherHeal, 0);
+
 							//System.out.println("Healing tool by: " + otherHeal + " out of " + stack.getMaxDamage());
-							
-							stack.setItemDamage(stack.getItemDamage() - otherHeal);
+
+							stack.setDamageValue(stack.getDamageValue() - otherHeal);
 						}
 					}
 			}
 		}
 		catch (Exception ignored) { }
 	}
-	
+
 	/**Catch for nullPointer if calling this**/
-	private void doArmorHeal(BlockEvent.BreakEvent e, EntityPlayer player)
+	private static void doArmorHeal(BlockEvent.BreakEvent e, PlayerEntity player)
 	{
 		if (HEAL_ARMOR_CHANCE.get() != 0)
 		{
@@ -173,138 +185,141 @@ public class EOAEventHandler
 			{
 				e.setExpToDrop(e.getExpToDrop() + ARMOR_HEAL_EXP_DROP.get());
 				int armorHeal;
-				
+
 				for (int i = 0; i < 4; i++)
 				{
-					armorHeal = player.inventory.armorInventory.get(i).getItemDamage() - HEAL_ARMOR_DURABILITY.get();
-					armorHeal = armorHeal < 0 ? 0 : armorHeal;
-					
-					player.inventory.armorInventory.get(i).setItemDamage(armorHeal);
+					armorHeal = player.inventory.armor.get(i).getDamageValue() - HEAL_ARMOR_DURABILITY.get();
+					armorHeal = Math.max(armorHeal, 0);
+
+					player.inventory.armor.get(i).setDamageValue(armorHeal);
 				}
 			}
 		}
 	}
-	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
-	public void onHarvestDrop(BlockEvent.HarvestDropsEvent e)
-	{
-		Block block = e.getState().getBlock();
 
-		int eblockState = -1;
-		
-		if(e.getState().getBlock() == Blocks.OBSIDIAN)
-			eblockState = LEVEL_OBSIDIAN;
-		
-		if(e.getState().getBlock() == EOABlocks.enderObsidian)
-			eblockState = LEVEL_ENDER_OBSIDIAN;
-		
-		if(e.getHarvester() != null)
+	public static ItemStack ON_HARVEST_DROPS(PlayerEntity player, Block block, ItemStack drops)
+	{
+		World world = (World) player.getCommandSenderWorld();
+
+		if(!world.isClientSide())
 		{
-			EntityPlayer player = e.getHarvester();
-			
-			int pick = checkPick(player);
-			
+			int eblockState = -1;
+
+			if (block == Blocks.OBSIDIAN)
+				eblockState = LEVEL_OBSIDIAN;
+
+			if (block == EOABlocks.ENDER_OBSIDIAN.get())
+				eblockState = LEVEL_ENDER_OBSIDIAN;
+
+			int pick = CHECK_PICK(player);
+
 			if (pick == -1) //Nothing special if not Obisidian or Ender Obsidian pick
-				return;
-			
+				return drops;
+
 			//If here, player is using a pick
 			try
 			{
-				int armor = checkArmor(player);
+				int armor = CHECK_ARMOR(player);
 				//Pick and armor are the same, suit has modifiers
 				if (pick == armor)
 				{
-					if(eblockState == -1) //Fortune effects are applied for non-obsidian BLOCKS.
+					if (eblockState == -1) //Fortune effects are applied for non-obsidian BLOCKS.
 					{
-						if(armor != LEVEL_ENDER_OBSIDIAN)
-							return; //This does not run unless the ender obsidian pick and armor set is active.
-						
+						if (armor != LEVEL_ENDER_OBSIDIAN)
+							return drops;
+
 						//If here, is wearing eo armor and pick
 						//Only ender obsidian set. Since check pick worked, we dont need to check again.
 						//Add extra
 						if (ENABLE_FORTUNE && EnderObsidianArmorsMod.RANDOM.nextInt(1000) < CHANCE_BUILT_IN_FORTUNE_EFFECT)
 						{//If here, apply fortune effect.
-							
+
 							int multiplier = FORTUNE_EFFECT_MULTIPLIER_BASE;
-							
+
 							int extra = EnderObsidianArmorsMod.RANDOM.nextInt(FORTUNE_EFFECT_MAX_ADDITION_CHANCE);
-							
+
 							//Currently a 1 in 32 chance for 5x multiplier
 							for (int i = FORTUNE_EFFECT_MAX_ADDITION_CHANCE / FORTUNE_EFFECT_MULTIPLIER_ADDITIONAL_RANDOM; i > 0; i /= FORTUNE_EFFECT_MULTIPLIER_ADDITIONAL_RANDOM)
 								if (extra < i)
 									multiplier++;
-							
+
 							//Apply extras
-							for(ItemStack itemStack : e.getDrops())
+							//DEPRECATED? ONLY ONE STACK PER DROP IT SEEMS.
+							//for (ItemStack itemStack : drops)
 							{
-								if(checkOreRelationship(block, itemStack))
+								if (checkOreRelationship(block, drops))
 								{
-									int count = itemStack.getCount() * multiplier;
+									int count = drops.getCount() * multiplier;
 
 									//Add extra quartz.
-									if(block.getUnlocalizedName().toLowerCase().equals("tile.netherquartz") && itemStack.getItem().getUnlocalizedName().toLowerCase().equals("item.netherquartz"))
+									if (block == Blocks.NETHER_QUARTZ_ORE && drops.getItem() == Items.QUARTZ)
 										count *= FORTUNE_EFFECT_QUARTZ_MULTIPLIER;
 
 									//Cap the max to 64.
-									itemStack.setCount(count > 64 ? 64 : count);
-									
+									drops.setCount(Math.min(count, 64));
+
 									//Damage pick proportionally
-									player.inventory.getCurrentItem().damageItem(multiplier * FORTUNE_EFFECT_EXTRA_PICK_HURT, player);
-									
+									player.getMainHandItem().setDamageValue(player.getMainHandItem().getDamageValue() - multiplier * FORTUNE_EFFECT_EXTRA_PICK_HURT);
+
 									//Spawn particles for a magical effect.
-									if (e.getWorld().isRemote)
+									if (!world.isClientSide())
 										for (int i = 0; i < 15; i++)
-											ParticleEffects.spawnEnderObsidianSpawnParticles(e.getWorld(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
+											ParticleEffects.spawnEnderObsidianSpawnParticles(world, player.getX(), player.getY(), player.getZ());
 								}
 							}
-						}
-						else //If here, they were unlucky, lets see if they are even less lucky
+						} else //If here, they were unlucky, lets see if they are even less lucky
 						{
-							if(EnderObsidianArmorsMod.RANDOM.nextInt(FORTUNE_EFFECT_DROP_0) == 0)
-								e.getDrops().clear();
+							if (EnderObsidianArmorsMod.RANDOM.nextInt(FORTUNE_EFFECT_DROP_0) == 0)
+								return ItemStack.EMPTY;
 						}
-						
-						return; //Do not continue because the block was NOT obsidian or ender obsidian.
+
+						return drops;
 					}
-					
+
 					//If mining obisidian and wearing matching set with matching pick
 					if (eblockState == LEVEL_OBSIDIAN)
 					{
 						doToolHeal(player);
-						
+
 						//If has silk touch
-						if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player.inventory.getCurrentItem()) > 0)
+						if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player) > 0)
 						{
 							//If in end and mining normal obsidian with suit, chance to drop ender
-							if (player.world.provider.getDimensionType() == DimensionType.THE_END && EnderObsidianArmorsMod.RANDOM.nextInt(CHANCE_CONVERT_OBSIDIAN_TO_ENDER.get()) == 0)
+							if (player.getCommandSenderWorld().dimension().location().equals(Dimension.END.location()) && EnderObsidianArmorsMod.RANDOM.nextInt(CHANCE_CONVERT_OBSIDIAN_TO_ENDER.get()) == 0)
 							{
 								//System.out.println("EO");
-								
-								e.getDrops().clear();
-								e.getDrops().add(new ItemStack(EOABlocks.enderObsidian));
-								return; //If we dropped ender, stop everything else
+								drops = new ItemStack(EOABlocks.ENDER_OBSIDIAN.get());
+								drops.setCount(1);
+
+								return drops; //If we dropped ender, stop everything else
 							}
 							else if (EnderObsidianArmorsMod.RANDOM.nextInt(CHANCE_TO_SILK_TOUCH_OBSIDIAN.get()) == 0)
 							{
-								return; //Do not clear.
+								return drops; //Do not clear.
 							}
 						}
-						
+
 						//If here, didnt have silk touch... rip obsidian.
 					}
 				}
-				
+
 				//If here, mixed picks with armor sets, can be mining any block at all.
-				if(eblockState == LEVEL_OBSIDIAN)
-					e.getDrops().clear();
+				if (eblockState == LEVEL_OBSIDIAN)
+					return ItemStack.EMPTY;
 			}
-			catch (NullPointerException ignored) { ignored.printStackTrace(); }
+			catch (NullPointerException ignored)
+			{
+				ignored.printStackTrace();
+			}
 		}
+
+		return drops;
 	}
 
 	private static boolean checkOreRelationship (Block block, ItemStack itemStack)
 	{
 		//WEIRD BUT SUPPORTED ORES
+
 
 		//MC QUARTZ
 		//GC DESH tile.mars item.raw_desh
@@ -316,16 +331,15 @@ public class EOAEventHandler
 		//GC CHEESE tile.basic_block_moon item.cheese_curd
 		//GC ILLEMITE tile.asteroids_block item.shard_titanium
 
-		String blockName = block.getUnlocalizedName().toLowerCase();
-		String itemName = itemStack.getUnlocalizedName().toLowerCase();
 
-		boolean isOre = blockName.contains("ore");
-
-		boolean dropsNonOre = !blockName.equals(itemName) && !itemName.contains("ore");
+		//boolean isOre = blockName.contains("ore");
+		//boolean dropsNonOre = !blockName.equals(itemName) && !itemName.contains("ore");
 
 		//System.out.println(blockName + " " + itemName + " " + isOre + " " + dropsNonOre);
 
-		return (isOre && dropsNonOre)
+		return block == Blocks.NETHER_QUARTZ_ORE && itemStack.getItem() == Items.QUARTZ;//MC QUARTZ
+
+		/*return (isOre && dropsNonOre)
 			    || (blockName.equals("tile.netherquartz") 	  && itemName.equals("item.netherquartz")) //MC QUARTZ
 				|| (blockName.equals("tile.mars") 			  && itemName.equals("item.raw_desh")) //GC DESH
 				|| (blockName.equals("tile.basic_block_moon") && itemName.equals("item.lunar_sapphire")) //GC SAPPHIRE
@@ -335,6 +349,8 @@ public class EOAEventHandler
 				|| (blockName.equals("tile.venus")            && itemName.equals("item.netherquartz")) //GC QUARTZ
 				|| (blockName.equals("tile.basic_block_moon") && itemName.equals("item.cheese_curd")) //GC CHEESE
 				|| (blockName.equals("tile.asteroids_block")  && itemName.equals("item.shard_titanium"))//GC ILLEMITE
-		;
+		;*/
 	}
+
+
 }
