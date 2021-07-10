@@ -44,11 +44,10 @@ public class EOAHelpers {
     {
         int pick = -1; //0 is obsidian, 1 is enderObsidian
 
-        if(player.getMainHandItem() != ItemStack.EMPTY)
-            if(player.getMainHandItem().getItem() == EOAItems.OBSIDIAN_PICKAXE.get())
-                pick = LEVEL_OBSIDIAN;
-            else if(player.getMainHandItem().getItem() == EOAItems.ENDER_OBSIDIAN_PICKAXE.get())
-                pick = LEVEL_ENDER_OBSIDIAN;
+        if(player.getMainHandItem().getItem() == EOAItems.OBSIDIAN_PICKAXE.get())
+            pick = LEVEL_OBSIDIAN;
+        else if(player.getMainHandItem().getItem() == EOAItems.ENDER_OBSIDIAN_PICKAXE.get())
+            pick = LEVEL_ENDER_OBSIDIAN;
 
         return pick;
     }

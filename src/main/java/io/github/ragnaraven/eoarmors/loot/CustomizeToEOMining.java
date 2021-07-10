@@ -25,17 +25,26 @@ public class CustomizeToEOMining extends LootFunction {
     @Override
     protected ItemStack run(ItemStack stack, LootContext context)
     {
+        System.out.println("1");
         if (!stack.isEmpty() && context.getParamOrNull(LootParameters.THIS_ENTITY) instanceof PlayerEntity)
         {
+            System.out.println("2");
+
             PlayerEntity playerEntity = (PlayerEntity) context.getParamOrNull(LootParameters.THIS_ENTITY);
             if (playerEntity == null)
                 return stack;
+
+            System.out.println("3");
 
             BlockState blockState = (BlockState) context.getParamOrNull(LootParameters.BLOCK_STATE);
             if (blockState == null)
                 return stack;
 
+            System.out.println("4");
+
             Block block = blockState.getBlock();
+
+            System.out.println("5");
 
             return EOAEventHandler.ON_HARVEST_DROPS(playerEntity, block, stack);
         }
@@ -55,6 +64,7 @@ public class CustomizeToEOMining extends LootFunction {
         }
 
         public void serialize(JsonObject object, CustomizeToEOMining functionClazz, JsonSerializationContext serializationContext) {
+
         }
 
         public CustomizeToEOMining deserialize(JsonObject object, JsonDeserializationContext deserializationContext, ILootCondition[] conditionsIn) {

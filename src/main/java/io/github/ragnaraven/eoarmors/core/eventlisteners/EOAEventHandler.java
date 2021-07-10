@@ -13,10 +13,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.loot.LootContext;
 import net.minecraft.world.Dimension;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -82,7 +80,7 @@ public class EOAEventHandler
 				{
 					if (e.getState().getBlock() == Blocks.OBSIDIAN)
 					{
-						doArmorHeal(e, player);
+						DO_ARMOR_HEAL(e, player);
 						doLavaDrop(e);
 						//doExp(e);
 					}
@@ -128,15 +126,20 @@ public class EOAEventHandler
 	}
 
 	/**Catch for nullPointer if calling this**/
-	private static void doToolHeal (PlayerEntity player)
+	private static void DO_TOOL_HEAL(PlayerEntity player)
 	{
 		try
 		{
 			if(OBSIDIAN_TO_MINE_TO_FULL_HEALTH.get() != 0)
 			{
+				System.out.println("OBSIDIAN_TO_MINE_TO_FULL_HEALTH");
+
 				int pickHeal = player.getMainHandItem().getMaxDamage() / OBSIDIAN_TO_MINE_TO_FULL_HEALTH.get();
 				pickHeal = pickHeal <= 0 ? 1 : pickHeal; //I have no clue why I am setting it to 1 but it heals the pick fully so..
 				player.getMainHandItem().setDamageValue(player.getMainHandItem().getDamageValue() - pickHeal);
+				System.out.println(player.getMainHandItem().getDamageValue() - pickHeal + " " + pickHeal);
+
+				System.out.println("EMD");
 			}
 
 			//Doesnt matter if pick is 0 here.
@@ -177,7 +180,7 @@ public class EOAEventHandler
 	}
 
 	/**Catch for nullPointer if calling this**/
-	private static void doArmorHeal(BlockEvent.BreakEvent e, PlayerEntity player)
+	private static void DO_ARMOR_HEAL(BlockEvent.BreakEvent e, PlayerEntity player)
 	{
 		if (HEAL_ARMOR_CHANCE.get() != 0)
 		{
@@ -201,33 +204,31 @@ public class EOAEventHandler
 	{
 		World world = (World) player.getCommandSenderWorld();
 
-		if(!world.isClientSide())
+		int eblockState = -1;
+
+		if (block == Blocks.OBSIDIAN)
+			eblockState = LEVEL_OBSIDIAN;
+
+		if (block == EOABlocks.ENDER_OBSIDIAN.get())
+			eblockState = LEVEL_ENDER_OBSIDIAN;
+
+		int pick = CHECK_PICK(player);
+
+		if (pick == -1) //Nothing special if not Obisidian or Ender Obsidian pick
+			return drops;
+
+		//If here, player is using a pick
+		try
 		{
-			int eblockState = -1;
-
-			if (block == Blocks.OBSIDIAN)
-				eblockState = LEVEL_OBSIDIAN;
-
-			if (block == EOABlocks.ENDER_OBSIDIAN.get())
-				eblockState = LEVEL_ENDER_OBSIDIAN;
-
-			int pick = CHECK_PICK(player);
-
-			if (pick == -1) //Nothing special if not Obisidian or Ender Obsidian pick
-				return drops;
-
-			//If here, player is using a pick
-			try
+			int armor = CHECK_ARMOR(player);
+			//Pick and armor are the same, suit has modifiers
+			if (pick == armor)
 			{
-				int armor = CHECK_ARMOR(player);
-				//Pick and armor are the same, suit has modifiers
-				if (pick == armor)
+				//if mining ANYTHING except Obsidian or Ender Obsidian
+				if (eblockState == -1) //Fortune effects are applied for non-obsidian BLOCKS.
 				{
-					if (eblockState == -1) //Fortune effects are applied for non-obsidian BLOCKS.
+					if (armor == LEVEL_ENDER_OBSIDIAN) //IF wearing EO
 					{
-						if (armor != LEVEL_ENDER_OBSIDIAN)
-							return drops;
-
 						//If here, is wearing eo armor and pick
 						//Only ender obsidian set. Since check pick worked, we dont need to check again.
 						//Add extra
@@ -267,50 +268,52 @@ public class EOAEventHandler
 											ParticleEffects.spawnEnderObsidianSpawnParticles(world, player.getX(), player.getY(), player.getZ());
 								}
 							}
-						} else //If here, they were unlucky, lets see if they are even less lucky
+						}
+						else //If here, they were unlucky, lets see if they are even less lucky
 						{
 							if (EnderObsidianArmorsMod.RANDOM.nextInt(FORTUNE_EFFECT_DROP_0) == 0)
 								return ItemStack.EMPTY;
 						}
-
-						return drops;
 					}
 
-					//If mining obisidian and wearing matching set with matching pick
-					if (eblockState == LEVEL_OBSIDIAN)
-					{
-						doToolHeal(player);
-
-						//If has silk touch
-						if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player) > 0)
-						{
-							//If in end and mining normal obsidian with suit, chance to drop ender
-							if (player.getCommandSenderWorld().dimension().location().equals(Dimension.END.location()) && EnderObsidianArmorsMod.RANDOM.nextInt(CHANCE_CONVERT_OBSIDIAN_TO_ENDER.get()) == 0)
-							{
-								//System.out.println("EO");
-								drops = new ItemStack(EOABlocks.ENDER_OBSIDIAN.get());
-								drops.setCount(1);
-
-								return drops; //If we dropped ender, stop everything else
-							}
-							else if (EnderObsidianArmorsMod.RANDOM.nextInt(CHANCE_TO_SILK_TOUCH_OBSIDIAN.get()) == 0)
-							{
-								return drops; //Do not clear.
-							}
-						}
-
-						//If here, didnt have silk touch... rip obsidian.
-					}
+					return drops;
 				}
 
-				//If here, mixed picks with armor sets, can be mining any block at all.
+				//If mining obisidian and wearing matching set with matching pick
 				if (eblockState == LEVEL_OBSIDIAN)
-					return ItemStack.EMPTY;
+				{
+					System.out.println("TOOL CALL");
+					DO_TOOL_HEAL(player);
+
+					//If has silk touch
+					if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player) > 0)
+					{
+						//If in end and mining normal obsidian with suit, chance to drop ender
+						if (player.getCommandSenderWorld().dimension().location().equals(Dimension.END.location()) && EnderObsidianArmorsMod.RANDOM.nextInt(CHANCE_CONVERT_OBSIDIAN_TO_ENDER.get()) == 0)
+						{
+							//System.out.println("EO");
+							drops = new ItemStack(EOABlocks.ENDER_OBSIDIAN.get());
+							drops.setCount(1);
+
+							return drops; //If we dropped ender, stop everything else
+						}
+						else if (EnderObsidianArmorsMod.RANDOM.nextInt(CHANCE_TO_SILK_TOUCH_OBSIDIAN.get()) == 0)
+						{
+							return drops; //Do not clear.
+						}
+					}
+
+					//If here, didnt have silk touch... rip obsidian.
+				}
 			}
-			catch (NullPointerException ignored)
-			{
-				ignored.printStackTrace();
-			}
+
+			//If here, mixed picks with armor sets, can be mining any block at all.
+			if (eblockState == LEVEL_OBSIDIAN)
+				return ItemStack.EMPTY;
+		}
+		catch (NullPointerException ignored)
+		{
+			ignored.printStackTrace();
 		}
 
 		return drops;
