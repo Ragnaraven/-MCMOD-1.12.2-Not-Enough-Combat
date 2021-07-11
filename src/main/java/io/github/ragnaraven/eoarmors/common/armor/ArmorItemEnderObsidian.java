@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import static io.github.ragnaraven.eoarmors.core.util.EOAHelpers.*;
 
 /**
- * Created by Andrew on 7/15/2017 at 8:16 PM.
+ * Created by Ragnaraven on 7/15/2017 at 8:16 PM.
  */
 public class ArmorItemEnderObsidian extends ModArmorItem
 {

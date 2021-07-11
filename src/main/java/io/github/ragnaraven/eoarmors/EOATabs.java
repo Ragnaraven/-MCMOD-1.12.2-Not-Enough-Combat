@@ -5,7 +5,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
 /**
- * Created by Andrew on 1/9/2017 at 5:15 PM.
+ * Created by Ragnaraven on 1/9/2017 at 5:15 PM.
  */
 public class EOATabs
 {

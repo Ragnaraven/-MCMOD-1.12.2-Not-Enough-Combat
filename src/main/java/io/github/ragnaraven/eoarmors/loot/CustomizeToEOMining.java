@@ -3,7 +3,7 @@ package io.github.ragnaraven.eoarmors.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import io.github.ragnaraven.eoarmors.core.eventlisteners.EOAEventHandler;
+import io.github.ragnaraven.eoarmors.core.eventlisteners.EOABlockBreakEventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,8 +14,6 @@ import net.minecraft.loot.LootFunctionType;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.loot.conditions.ILootCondition;
 
-import java.util.Random;
-
 public class CustomizeToEOMining extends LootFunction {
 
     public CustomizeToEOMining(ILootCondition[] conditionsIn) {
@@ -25,28 +23,19 @@ public class CustomizeToEOMining extends LootFunction {
     @Override
     protected ItemStack run(ItemStack stack, LootContext context)
     {
-        System.out.println("1");
         if (!stack.isEmpty() && context.getParamOrNull(LootParameters.THIS_ENTITY) instanceof PlayerEntity)
         {
-            System.out.println("2");
-
             PlayerEntity playerEntity = (PlayerEntity) context.getParamOrNull(LootParameters.THIS_ENTITY);
             if (playerEntity == null)
                 return stack;
-
-            System.out.println("3");
 
             BlockState blockState = (BlockState) context.getParamOrNull(LootParameters.BLOCK_STATE);
             if (blockState == null)
                 return stack;
 
-            System.out.println("4");
-
             Block block = blockState.getBlock();
 
-            System.out.println("5");
-
-            return EOAEventHandler.ON_HARVEST_DROPS(playerEntity, block, stack);
+            return EOABlockBreakEventHandler.ON_HARVEST_DROPS(playerEntity, block, stack);
         }
 
         return stack;

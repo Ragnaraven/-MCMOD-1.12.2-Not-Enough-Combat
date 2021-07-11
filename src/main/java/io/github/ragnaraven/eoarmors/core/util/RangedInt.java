@@ -1,7 +1,7 @@
 package io.github.ragnaraven.eoarmors.core.util;
 
 /**
- * Created by Andrew on 10/5/2017 at 2:42 PM.
+ * Created by Ragnaraven on 10/5/2017 at 2:42 PM.
  */
 
 //TODO: Mutable version should be made.

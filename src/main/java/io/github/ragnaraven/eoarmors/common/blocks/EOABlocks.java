@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.function.ToIntFunction;
 
 /**
- * Created by Andrew on 7/15/2017 at 7:08 PM.
+ * Created by Ragnaraven on 7/15/2017 at 7:08 PM.
  */
 public class EOABlocks
 {

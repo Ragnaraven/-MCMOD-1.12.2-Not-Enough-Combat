@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.capability.wrappers.BlockWrapper;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * Created by Andrew on 9/22/2017 at 12:37 PM.
+ * Created by Ragnaraven on 9/22/2017 at 12:37 PM.
  *
  * This class manages the spawning of EnderObsidian.
  */

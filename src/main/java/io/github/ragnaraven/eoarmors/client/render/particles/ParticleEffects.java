@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 /**
- * Created by Andrew on 7/17/2017 at 5:30 PM.
+ * Created by Ragnaraven on 7/17/2017 at 5:30 PM.
  */
 public class ParticleEffects
 {

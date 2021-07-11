@@ -42,6 +42,9 @@ public class EnderObsidianArmorsMod
 		final ModLoadingContext modLoadingContext = ModLoadingContext.get();
 		modLoadingContext.registerConfig(ModConfig.Type.CLIENT, ConfigHolder.CLIENT_SPEC);
 		modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
+
+
+		//MinecraftForge.EVENT_BUS.register(EAOGeneral.class);
 	}
 
 	private void setup(final FMLCommonSetupEvent event)

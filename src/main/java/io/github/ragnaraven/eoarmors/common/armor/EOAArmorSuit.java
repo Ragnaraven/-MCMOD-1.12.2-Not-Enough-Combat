@@ -7,7 +7,7 @@ import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Item;
 
 /**
- * Created by Andrew on 1/20/2017 at 6:02 PM.
+ * Created by Ragnaraven on 1/20/2017 at 6:02 PM.
  */
 public class EOAArmorSuit
 {

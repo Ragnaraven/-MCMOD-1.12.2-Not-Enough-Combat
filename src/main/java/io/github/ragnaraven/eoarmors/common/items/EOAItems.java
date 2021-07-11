@@ -19,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.function.Supplier;
 
 /**
- * Created by Andrew on 1/9/2017 at 5:07 PM.
+ * Created by Ragnaraven on 1/9/2017 at 5:07 PM.
  */
 
 @Mod.EventBusSubscriber

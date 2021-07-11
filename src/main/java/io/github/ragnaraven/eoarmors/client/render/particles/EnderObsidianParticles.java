@@ -4,7 +4,7 @@ import net.minecraft.client.particle.PortalParticle;
 import net.minecraft.client.world.ClientWorld;
 
 /**
- * Created by Andrew on 7/17/2017 at 5:31 PM.
+ * Created by Ragnaraven on 7/17/2017 at 5:31 PM.
  */
 public class EnderObsidianParticles extends PortalParticle
 {

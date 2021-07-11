@@ -11,7 +11,7 @@ import static io.github.ragnaraven.eoarmors.core.util.EOAHelpers.CHECK_ARMOR;
 import static io.github.ragnaraven.eoarmors.core.util.EOAHelpers.LEVEL_OBSIDIAN;
 
 /**
- * Created by Andrew on 1/21/2017 at 9:54 PM.
+ * Created by Ragnaraven on 1/21/2017 at 9:54 PM.
  */
 @Mod.EventBusSubscriber
 public class ArmorItemObsidian extends ModArmorItem

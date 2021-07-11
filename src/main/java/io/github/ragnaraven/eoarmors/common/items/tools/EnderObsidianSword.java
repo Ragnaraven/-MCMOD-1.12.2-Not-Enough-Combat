@@ -19,7 +19,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 
 /**
- * Created by Andrew on 7/17/2017 at 4:00 PM.
+ * Created by Ragnaraven on 7/17/2017 at 4:00 PM.
  */
 public class EnderObsidianSword extends SwordItem
 {

@@ -4,7 +4,7 @@ import io.github.ragnaraven.eoarmors.EnderObsidianArmorsMod;
 import io.github.ragnaraven.eoarmors.common.blocks.EOABlocks;
 import io.github.ragnaraven.eoarmors.common.items.EOAItems;
 import io.github.ragnaraven.eoarmors.client.render.particles.ParticleEffects;
-import io.github.ragnaraven.eoarmors.core.util.RangedInt;
+import io.github.ragnaraven.eoarmors.config.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -22,32 +22,33 @@ import net.minecraftforge.fml.common.Mod;
 import static io.github.ragnaraven.eoarmors.core.util.EOAHelpers.*;
 
 /**
- * Created by Andrew on 7/15/2017 at 2:48 AM.
+ * Created by Ragnaraven on 7/15/2017 at 2:48 AM.
  *
  * This class handles all tool healing events, as well as ender obsidian creation
  */
 @Mod.EventBusSubscriber(modid = EnderObsidianArmorsMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class EOAEventHandler
+public class EOABlockBreakEventHandler
 {
 	//On mine lava
-	public static final RangedInt LAVA_SPAWN_CHANCE = new RangedInt(11, RangedInt.EMODES.ALWAYS);
+	//public static final RangedInt LAVA_SPAWN_CHANCE = new RangedInt(11, RangedInt.EMODES.ALWAYS);
 	
 	//On mine exp
-	public static final RangedInt EXP_CHANCE = new RangedInt(5, RangedInt.EMODES.ALWAYS);
-	public static final RangedInt BASE_EXP = new RangedInt(2, RangedInt.EMODES.ALWAYS);
-	public static final RangedInt EXP_RANDOM = new RangedInt(3, RangedInt.EMODES.ALWAYS);
+	//public static final RangedInt EXP_CHANCE = new RangedInt(5, RangedInt.EMODES.ALWAYS);
+	//public static final RangedInt BASE_EXP = new RangedInt(2, RangedInt.EMODES.ALWAYS);
+	//public static final RangedInt EXP_RANDOM = new RangedInt(3, RangedInt.EMODES.ALWAYS);
 	
 	//On mine tool heal
-	public static final RangedInt OBSIDIAN_TO_MINE_TO_FULL_HEALTH = new RangedInt(25, RangedInt.EMODES.ALWAYS);
-	public static final RangedInt ADDITIONAL_OBSIDIAN_TO_MINE_NON_PICK_TO_FULL_HEALTH = new RangedInt(18, RangedInt.EMODES.ALWAYS); //Added to above
+	//public static final RangedInt OBSIDIAN_TO_MINE_TO_FULL_HEALTH = new RangedInt(25, RangedInt.EMODES.ALWAYS);
+	//public static final RangedInt ADDITIONAL_OBSIDIAN_TO_MINE_NON_PICK_TO_FULL_HEALTH = new RangedInt(18, RangedInt.EMODES.ALWAYS); //Added to above
+
 	//On mine armor heal
-	public static final RangedInt HEAL_ARMOR_CHANCE = new RangedInt(0, 1000, 700, RangedInt.EMODES.ALWAYS); //Out 0f 1000
-	public static final RangedInt HEAL_ARMOR_DURABILITY = new RangedInt(1, Integer.MAX_VALUE, 2, RangedInt.EMODES.ALWAYS);
-	public static final RangedInt ARMOR_HEAL_EXP_DROP = new RangedInt(1, RangedInt.EMODES.ALWAYS);
+	//public static final RangedInt HEAL_ARMOR_CHANCE = new RangedInt(0, 1000, 700, RangedInt.EMODES.ALWAYS); //Out 0f 1000
+	//public static final RangedInt HEAL_ARMOR_DURABILITY = new RangedInt(1, Integer.MAX_VALUE, 2, RangedInt.EMODES.ALWAYS);
+	//public static final RangedInt ARMOR_HEAL_EXP_DROP = new RangedInt(1, RangedInt.EMODES.ALWAYS);
 	
 	//On harvest
-	public static final RangedInt CHANCE_TO_SILK_TOUCH_OBSIDIAN = new RangedInt(7, RangedInt.EMODES.ALWAYS);
-	public static final RangedInt CHANCE_CONVERT_OBSIDIAN_TO_ENDER = new RangedInt(10, RangedInt.EMODES.ALWAYS);
+	//public static final RangedInt CHANCE_TO_SILK_TOUCH_OBSIDIAN = new RangedInt(7, RangedInt.EMODES.ALWAYS);
+	//public static final RangedInt CHANCE_CONVERT_OBSIDIAN_TO_ENDER = new RangedInt(10, RangedInt.EMODES.ALWAYS);
 	
 	public static boolean ENABLE_FORTUNE = true;
 	//Redo this to be smarter, maybe add config, if requested.
@@ -71,7 +72,7 @@ public class EOAEventHandler
 			
 			if(armor == -1)
 				return; //-1 means no match for set.
-			
+
 			//If here, player is wearing all of obsidian or enderObsidian armor. Can be checked by armor val
 			try
 			{
@@ -80,6 +81,7 @@ public class EOAEventHandler
 				{
 					if (e.getState().getBlock() == Blocks.OBSIDIAN)
 					{
+						DO_TOOL_HEAL(player);
 						DO_ARMOR_HEAL(e, player);
 						doLavaDrop(e);
 						//doExp(e);
@@ -94,13 +96,13 @@ public class EOAEventHandler
 	{
 		World world = (World) e.getWorld();
 
-		if(LAVA_SPAWN_CHANCE.get() != 0)
+		if(ConfigHolder.SERVER.LAVA_SPAWN_CHANCE.get() != 0)
 		{
 			if (world.isClientSide())
 			{
 				if(!world.dimension().location().equals(Dimension.END.location()))
 				{
-					if (EnderObsidianArmorsMod.RANDOM.nextInt(LAVA_SPAWN_CHANCE.get()) == 0)
+					if (EnderObsidianArmorsMod.RANDOM.nextInt(ConfigHolder.SERVER.LAVA_SPAWN_CHANCE.get()) == 0)
 					{
 						//Cancel the drop, set the block.
 						world.setBlockAndUpdate(e.getPos(), Blocks.LAVA.defaultBlockState());
@@ -113,14 +115,14 @@ public class EOAEventHandler
 
 	private static void doExp (BlockEvent.BreakEvent e)
 	{
-		if (EXP_CHANCE.get() != 0)
+		if (ConfigHolder.SERVER.EXP_CHANCE.get() != 0)
 		{
-			if (EnderObsidianArmorsMod.RANDOM.nextInt(EXP_CHANCE.get()) == 0)
+			if (EnderObsidianArmorsMod.RANDOM.nextInt(ConfigHolder.SERVER.EXP_CHANCE.get()) == 0)
 			{
-				e.setExpToDrop(e.getExpToDrop() + BASE_EXP.get());
+				e.setExpToDrop(e.getExpToDrop() + ConfigHolder.SERVER.BASE_EXP.get());
 
-				if(EXP_RANDOM.get() != 0)
-					e.setExpToDrop(e.getExpToDrop() + EnderObsidianArmorsMod.RANDOM.nextInt(EXP_RANDOM.get()));
+				if(ConfigHolder.SERVER.EXP_RANDOM.get() != 0)
+					e.setExpToDrop(e.getExpToDrop() + EnderObsidianArmorsMod.RANDOM.nextInt(ConfigHolder.SERVER.EXP_RANDOM.get()));
 			}
 		}
 	}
@@ -130,20 +132,15 @@ public class EOAEventHandler
 	{
 		try
 		{
-			if(OBSIDIAN_TO_MINE_TO_FULL_HEALTH.get() != 0)
+			if(ConfigHolder.SERVER.OBSIDIAN_TO_MINE_FULL_HEALTH_PICKAXE.get() != 0)
 			{
-				System.out.println("OBSIDIAN_TO_MINE_TO_FULL_HEALTH");
-
-				int pickHeal = player.getMainHandItem().getMaxDamage() / OBSIDIAN_TO_MINE_TO_FULL_HEALTH.get();
+				int pickHeal = player.getMainHandItem().getMaxDamage() / ConfigHolder.SERVER.OBSIDIAN_TO_MINE_FULL_HEALTH_PICKAXE.get();
 				pickHeal = pickHeal <= 0 ? 1 : pickHeal; //I have no clue why I am setting it to 1 but it heals the pick fully so..
 				player.getMainHandItem().setDamageValue(player.getMainHandItem().getDamageValue() - pickHeal);
-				System.out.println(player.getMainHandItem().getDamageValue() - pickHeal + " " + pickHeal);
-
-				System.out.println("EMD");
 			}
 
 			//Doesnt matter if pick is 0 here.
-			if(ADDITIONAL_OBSIDIAN_TO_MINE_NON_PICK_TO_FULL_HEALTH.get() != 0)
+			if(ConfigHolder.SERVER.OBSIDIAN_TO_MINE_FULL_HEALTH_INVENTORY.get() != 0)
 			{
 				for (int i = 0; i < player.inventory.getContainerSize(); i++)
 					if (player.inventory.getItem(i) != ItemStack.EMPTY && player.inventory.getItem(i) != player.getMainHandItem()) //Current item already healed
@@ -166,7 +163,7 @@ public class EOAEventHandler
 								|| item == EOAItems.OBSIDIAN_SWORD.get()
 								|| item == EOAItems.ENDER_OBSIDIAN_SWORD.get())
 						{
-							int otherHeal = stack.getMaxDamage() / (OBSIDIAN_TO_MINE_TO_FULL_HEALTH.get() + ADDITIONAL_OBSIDIAN_TO_MINE_NON_PICK_TO_FULL_HEALTH.get());
+							int otherHeal = stack.getMaxDamage() / (ConfigHolder.SERVER.OBSIDIAN_TO_MINE_FULL_HEALTH_PICKAXE.get() + ConfigHolder.SERVER.OBSIDIAN_TO_MINE_FULL_HEALTH_INVENTORY.get());
 							otherHeal = Math.max(otherHeal, 0);
 
 							//System.out.println("Healing tool by: " + otherHeal + " out of " + stack.getMaxDamage());
@@ -182,16 +179,17 @@ public class EOAEventHandler
 	/**Catch for nullPointer if calling this**/
 	private static void DO_ARMOR_HEAL(BlockEvent.BreakEvent e, PlayerEntity player)
 	{
-		if (HEAL_ARMOR_CHANCE.get() != 0)
+		if (ConfigHolder.SERVER.HEAL_ARMOR_CHANCE.get() != 0)
 		{
-			if (EnderObsidianArmorsMod.RANDOM.nextInt(HEAL_ARMOR_CHANCE.max) < HEAL_ARMOR_CHANCE.get())
+			if (EnderObsidianArmorsMod.RANDOM.nextInt(ConfigHolder.SERVER.HEAL_ARMOR_CHANCE.get()) == 0)
 			{
-				e.setExpToDrop(e.getExpToDrop() + ARMOR_HEAL_EXP_DROP.get());
+				e.setExpToDrop(e.getExpToDrop() + ConfigHolder.SERVER.HEAL_ARMOR_EXP_DROP_AMOUNT.get());
+
 				int armorHeal;
 
 				for (int i = 0; i < 4; i++)
 				{
-					armorHeal = player.inventory.armor.get(i).getDamageValue() - HEAL_ARMOR_DURABILITY.get();
+					armorHeal = player.inventory.armor.get(i).getDamageValue() - ConfigHolder.SERVER.HEAL_ARMOR_DURABILITY.get();
 					armorHeal = Math.max(armorHeal, 0);
 
 					player.inventory.armor.get(i).setDamageValue(armorHeal);
@@ -248,7 +246,7 @@ public class EOAEventHandler
 							//DEPRECATED? ONLY ONE STACK PER DROP IT SEEMS.
 							//for (ItemStack itemStack : drops)
 							{
-								if (checkOreRelationship(block, drops))
+								if (CHECK_ORE_RELATIONSHIP(block, drops))
 								{
 									int count = drops.getCount() * multiplier;
 
@@ -282,14 +280,14 @@ public class EOAEventHandler
 				//If mining obisidian and wearing matching set with matching pick
 				if (eblockState == LEVEL_OBSIDIAN)
 				{
-					System.out.println("TOOL CALL");
-					DO_TOOL_HEAL(player);
+					//DO_TOOL_HEAL(player);
 
 					//If has silk touch
 					if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player) > 0)
 					{
 						//If in end and mining normal obsidian with suit, chance to drop ender
-						if (player.getCommandSenderWorld().dimension().location().equals(Dimension.END.location()) && EnderObsidianArmorsMod.RANDOM.nextInt(CHANCE_CONVERT_OBSIDIAN_TO_ENDER.get()) == 0)
+						if (player.getCommandSenderWorld().dimension().location().equals(Dimension.END.location())
+								&& EnderObsidianArmorsMod.RANDOM.nextInt(ConfigHolder.SERVER.CHANCE_TO_CONVERT_OBSIDIAN_TO_ENDER_OBSIDIAN.get()) == 0)
 						{
 							//System.out.println("EO");
 							drops = new ItemStack(EOABlocks.ENDER_OBSIDIAN.get());
@@ -297,7 +295,7 @@ public class EOAEventHandler
 
 							return drops; //If we dropped ender, stop everything else
 						}
-						else if (EnderObsidianArmorsMod.RANDOM.nextInt(CHANCE_TO_SILK_TOUCH_OBSIDIAN.get()) == 0)
+						else if (EnderObsidianArmorsMod.RANDOM.nextInt(ConfigHolder.SERVER.CHANCE_TO_SILK_TOUCH_OBSIDIAN.get()) == 0)
 						{
 							return drops; //Do not clear.
 						}
@@ -306,10 +304,12 @@ public class EOAEventHandler
 					//If here, didnt have silk touch... rip obsidian.
 				}
 			}
-
-			//If here, mixed picks with armor sets, can be mining any block at all.
-			if (eblockState == LEVEL_OBSIDIAN)
-				return ItemStack.EMPTY;
+			else
+			{
+				//If here, mixed picks with armor sets, can be mining any block at all.
+				if (eblockState == LEVEL_OBSIDIAN)
+					return drops;
+			}
 		}
 		catch (NullPointerException ignored)
 		{
@@ -319,7 +319,7 @@ public class EOAEventHandler
 		return drops;
 	}
 
-	private static boolean checkOreRelationship (Block block, ItemStack itemStack)
+	private static boolean CHECK_ORE_RELATIONSHIP(Block block, ItemStack itemStack)
 	{
 		//WEIRD BUT SUPPORTED ORES
 

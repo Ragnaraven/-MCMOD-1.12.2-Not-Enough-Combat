@@ -8,7 +8,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.Random;
 
 /**
- * Created by Andrew on 7/15/2017 at 7:09 PM.
+ * Created by Ragnaraven on 7/15/2017 at 7:09 PM.
  */
 public class EnderObsidian extends BlockBase
 {
